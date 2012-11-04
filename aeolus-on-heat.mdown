@@ -1,0 +1,317 @@
+Aeolus on Heat (on Deltacloud)
+==============================
+
+---
+
+## Intro
+
+I'm Tomáš Šedovič
+
+Worked 2 years on Aeolus.
+
+8 months on OpenStack Heat.
+
+
+---
+
+## Outline
+
+* CloudFormation and Heat recap
+* Why should Aeolus care?
+* How to do it
+* What's done so far
+* The future
+* Proof of Concept Demo
+
+
+---
+## WTF Comic Sans?
+
+<p></p>
+
+---
+## Problem, officer?
+
+![trollface](trollface.png)
+
+
+---
+
+# CloudFormation and Heat
+
+
+---
+
+## AWS CloudFormation (CFN)
+
+* Orchestration of AWS products
+* Declarative (JSON-based) template language
+* Similar to Aeolus Deployables
+* RPC-over-HTTP API
+
+
+---
+## CFN does much more
+
+* S3
+* EBS Volumes
+* Custom servers: databases, autoscaling
+* Networking: VPNs, Subnets, Gateways, etc.
+
+---
+## OpenStack Heat (beginning)
+
+* 9 months old
+* CloudFormation for OpenStack
+* Copied the CFN template format
+* Copied the CFN API
+
+
+---
+## Heat Now
+
+* ReST API similar to other OpenStack projects
+* Added features over CloudFormation: High Availability
+
+
+---
+## Heat Future
+
+* More template formats
+* Full CloudFormation feature parity
+* More non-CloudFormation-specific features
+* Multiple provider support?
+* Full member of OpenStack core?
+
+---
+# Why should Aeolus care?
+
+---
+## Less code!
+
+![Delete Key](delete-key.jpg)
+
+
+---
+## No longer needed
+
+* taskomatic
+* dbomatic
+* Deployment state logic
+* Audrey?
+
+---
+## Moar features!
+* High Availability
+* Monitoring
+* Load Balancing
+* Autoscaling
+
+---
+# Anything Heat adds we get for free
+
+---
+## Modularity
+* Conductor's too big
+* We're breaking it apart anyway (TIM, Albreich, Converge UI, ...)
+* Let Heat do it's One Thing Well
+
+
+---
+# Integrating Aeolus and Heat
+
+---
+## Missing pieces
+* Multi-provider support
+* Deployable XML vs. Heat Template
+* Conductor integration
+* CloudFormation features
+
+---
+## Proof of concept
+
+![POC Pentagram](poc-pentagram.png)
+
+
+---
+## POC Goals
+
+Launch a multi-instance deployment in Conductor over Heat.
+
+Demonstrate to respective communities. Evaluate if and how to do it propely.
+
+
+---
+## Heat on Deltacloud
+* No (usable) Python bindings
+* Heat Engine tied into OpenStack API
+* CFN API auth vs. multiple Deltacloud endpoints & creds
+
+
+---
+## Deltacloud Python client
+* Wrote almost from scratch
+* JSON Content-Type
+* Bugs in Deltacloud JSON
+* Collection listing & instance launching works
+
+Latest: <https://github.com/tomassedovic/deltacloud>
+
+`deltacloud/clients/python`
+
+Gradually merging into upstream.
+
+
+---
+## OpenStack vs. Deltacloud bindings
+* Single point of origin in Heat Engine
+* Build client with the same interface connected to Deltacloud
+* Swap 'em
+
+Source: <https://github.com/tomassedovic/heat>
+
+Branch: `multiple-backends`
+
+`heat/heat/deltacloud/client.py`
+
+
+---
+## CloudFormation API
+
+* No concept of multiple endpoints, different creds in CFN auth
+* CloudFormation API hard to use
+* Possible lock-in and legal issues
+* Could hinder the incubation
+
+
+---
+## Heat's ReST API
+
+* Similar to other OpenStack APIs
+* Ours to extend & modify
+
+Pass in Deltacloud endpoint URL and creds with minimal modifications
+
+
+---
+## Deployable/Template formats
+
+* Conceptually close
+* Conductor already parses Deployable XML
+* Just generate appropriate JSON output
+* Bundled in Conductor code
+
+Right now supports Instance resources only.
+
+
+---
+## Future: separate conversion library
+
+* Useful for other projects
+* Easier to add new formats (TOSCA)
+
+
+---
+## Conductor integration
+
+* Horrible hack (but works (mostly))
+* Template conversion and Heat API code in `src/app/util/heat.rb`
+* Overriden `send_launch_request` in `src/app/models/deployable.rb`
+* Passes deployable_xml, instance matches, creds to `heat.rb`
+* Deployment state is loaded from Heat on each render
+
+Source: <https://github.com/tomassedovic/heat>
+
+Branch: `heat`
+
+
+---
+## CloudFormation features
+
+* Deltacloud supports a subset of CloudFormation and Heat
+* Heat (and Aeolus) should provide them if they're there
+* **Slower** is documenting the missing gaps, talking to Deltacloud folks
+
+
+---
+# Where do we go from here?
+
+
+---
+## Tighten up the POC
+
+* Cleaner code
+* Add missing features
+* Make more robust
+
+
+---
+## Gather community feedback
+
+* Is this useful?
+* Should we proceed with integration?
+
+
+---
+# Open issues
+
+
+---
+## Audrey
+
+* Heat does the same thing
+* Can/should we nuke it?
+
+---
+## Image building
+
+* No changes necessary -- we're using Deltacloud either way
+* heat-jeos: bundle Heat CFN-tools during image building (optional)
+* heat-prebuild: generate and customize images from a deployable
+
+
+---
+## Ruby vs. Python
+
+* Makes contributions harder
+* Ain't gonna change (OpenStack is Python, Aeolus is Ruby)
+* Can't communicate directly -- have to use ReST, RPC, etc.
+* We already have Python projects: Image Factory, Oz
+
+
+---
+## Permissions
+
+* Heat uses OpenStack's permission model
+* No direct support for quotas, etc. in Heat
+* We should probably keep this in Conductor
+
+
+---
+## Robustness
+
+* Multiple new daemons for Heat
+* Cannot use Deltacloud as a library
+
+
+---
+## Performance
+
+* Querying Heat on every Deployment index/show
+* Services in between Conductor and Deltacloud
+
+
+---
+## Devise proper integration path
+
+* Which data goes where? (Conductor vs. Heat database)
+* Work with #aeolus, #deltacloud and #heat -- all must be on board!
+* Custom vs. integral part of Conductor?
+
+
+---
+# Qestions & Comments & Trolling
+
+
+---
+# <3

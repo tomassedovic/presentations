@@ -1,3 +1,3 @@
 #!/bin/bash
 
-source ./.venv/bin/activate && landslide config.cfg
+source ../.venv/bin/activate && landslide config.cfg

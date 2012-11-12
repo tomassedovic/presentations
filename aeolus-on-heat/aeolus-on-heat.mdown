@@ -20,17 +20,14 @@ Worked 2 years on Aeolus.
 * Why should Aeolus care?
 * How to do it
 * What's done so far
-* The future
 * Proof of Concept Demo
+* The future
+* Issues & Discussion
 
 
----
-## WTF Comic Sans?
-
-<p></p>
 
 ---
-## Problem, officer?
+## Comic Sans! Problem, officer?
 
 ![trollface](trollface.png)
 
@@ -79,7 +76,7 @@ Worked 2 years on Aeolus.
 
 * More template formats
 * Full CloudFormation feature parity
-* More non-CloudFormation-specific features
+* More non-CloudFormation-specific features (Gluster?)
 * Multiple provider support?
 * Full member of OpenStack core?
 
@@ -103,7 +100,7 @@ Worked 2 years on Aeolus.
 ---
 ## Moar features!
 * High Availability
-* Monitoring
+* Monitoring (with API)
 * Load Balancing
 * Autoscaling
 
@@ -115,6 +112,10 @@ Worked 2 years on Aeolus.
 * Conductor's too big
 * We're breaking it apart anyway (TIM, Albreich, Converge UI, ...)
 * Let Heat do it's One Thing Well
+* Heat already has better upstream
+* Useful on its own
+
+People want this stuff!
 
 
 ---
@@ -165,7 +166,7 @@ Gradually merging into upstream.
 ---
 ## OpenStack vs. Deltacloud bindings
 * Single point of origin in Heat Engine
-* Build client with the same interface connected to Deltacloud
+* Build client with the same interface talking to Deltacloud
 * Swap 'em
 
 Source: <https://github.com/tomassedovic/heat>
@@ -214,15 +215,18 @@ Right now supports Instance resources only.
 ---
 ## Conductor integration
 
-* Horrible hack (but works (mostly))
 * Template conversion and Heat API code in `src/app/util/heat.rb`
 * Overriden `send_launch_request` in `src/app/models/deployable.rb`
-* Passes deployable_xml, instance matches, creds to `heat.rb`
+* Sends deployable_xml, instance matches, creds to `heat.rb`
 * Deployment state is loaded from Heat on each render
 
 Source: <https://github.com/tomassedovic/heat>
 
 Branch: `heat`
+
+
+---
+# Proof of concept demo
 
 
 ---
@@ -241,7 +245,7 @@ Branch: `heat`
 ## Tighten up the POC
 
 * Cleaner code
-* Add missing features
+* Add missing features (launch-time params, provisioning)
 * Make more robust
 
 
@@ -261,6 +265,7 @@ Branch: `heat`
 
 * Heat does the same thing
 * Can/should we nuke it?
+* Can be swapped transparently (I think)
 
 ---
 ## Image building
@@ -275,7 +280,7 @@ Branch: `heat`
 
 * Makes contributions harder
 * Ain't gonna change (OpenStack is Python, Aeolus is Ruby)
-* Can't communicate directly -- have to use ReST, RPC, etc.
+* Have to use ReST, RPC, etc.
 * We already have Python projects: Image Factory, Oz
 
 
@@ -314,4 +319,4 @@ Branch: `heat`
 
 
 ---
-# <3
+# -30-

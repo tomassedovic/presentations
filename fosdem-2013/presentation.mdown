@@ -1,0 +1,242 @@
+
+# Orchestrating complex deployments on OpenStack using Heat
+
+Tomáš Šedovič
+Software engineer at Red Hat, Czech Republic
+tsedovic@redhat.com
+
+---
+
+# Outline
+
+* OpenStack recap
+* CloudFormation recap
+* Heat
+* The Demo
+* Q&A
+
+---
+
+# What is Heat?
+
+API + UI for orchestration & high availability on OpenStack.
+
+Describe you cloud deployment in a declarative language.
+
+Heat will process and build it.
+
+---
+
+# OpenStack
+
+* Build your own cloud insfrastructure
+* Free and Open Source
+* Services for: managing VMs, image store, block storage, virtual networking
+
+---
+
+# Amazon CloudFormation
+
+* JSON-based language
+* API for launching "Stacks"
+* Tied with AWS services: EC2, S3, EBS, CloudWatch, etc.
+
+---
+
+# Heat Origin
+
+* Started in March 2012
+* Small dev core
+* Early outside interest
+
+---
+
+# The Goals
+
+* CloudFormation compatibility
+* Become a proper OpenStack project
+* Have a healthy community
+
+---
+
+# What can you do with it?
+
+* Launch instances with inter dependencies & parameters
+* Attach block (cinder) or object (swift) storage
+* Floating IPs
+* Load balancing
+* High availability (restart services, instances, the whole stack)
+* Database resource type
+* Networking (quantum) in progress
+
+---
+
+# Relation with OpenStack
+
+* Along with ceilometer the first external project accepted into incubation
+* Using the same infrastructure (github, gerrit, launchpad, mailing lists, meetings)
+* Follow the same coding style, architecture, packaging, etc.
+
+---
+
+# Template format Overview
+
+---
+
+# Structure
+
+    HeatTemplateFormatVersion: 2012-12-12
+    Description: This is an empty Heat template showing the basic structure
+
+    Parameters:
+      KeyName:
+        Description: Nova keypair name for SSH access
+        Type: String
+      InstanceType:
+        Type: String
+        Default: m1.large
+        AllowedValues: [t1.micro, m1.small, m1.large]
+
+    Resources:
+      WebServer:
+        Type: AWS::EC2::Instance
+        Properties:
+          ImageId: ami-b57474c1
+          InstanceType: {Ref: InstanceType}
+          KeyName: {Ref: KeyName}
+
+    Outputs:
+      WebsiteURL:
+        Value:
+          Fn::Join:
+          - ''
+          - ["http://", {Fn::GetAtt: [WikiDatabase, PublicIp]}, "/wordpress"]
+        Description: URL for the deployed site
+
+---
+
+# Template & Resource examples
+
+---
+
+# Instance
+
+    MyInstance:
+      Type: AWS::EC2::Instance
+        Metadata:
+          packages:
+            yum:
+              httpd: []
+              wordpress: []
+          services:
+            systemd:
+              httpd: {enabled: 'true', ensureRunning: 'true'}
+        Properties:
+          ImageId: ami-b57474c1
+          InstanceType: m1.large
+          KeyName: mykey
+          UserData: |
+            #!/bin/bash
+            # run your commands here
+
+---
+
+# Elastic IP
+
+declaration:
+
+    WebServerIP: {Type: AWS::EC2::EIP}
+    
+    WebServerIPAssociation:
+      Type: AWS::EC2::EIPAssociation
+      Properties:
+        InstanceId: {Ref: WebServer}
+        EIP: {Ref: WebServerIP}
+
+use it:
+
+    {Ref: WebServerIP}
+
+---
+
+# Relation Database Service
+
+    MyDBServer:
+      Type: AWS::RDS::DBInstance
+      Properties:
+        DBName: wordpress
+        Engine: MySQL
+        MasterUsername: wordpress
+        MasterUserPassword: 1234
+        AllocatedStorage: 5
+        DBInstanceClass: db.m1.small
+
+---
+
+# Wait Conditions
+
+Set up explicit dependencies between resources.
+
+    Wordpress:
+      Type: AWS::EC2::Instance
+      DependsOn: DatabaseServer
+      ...
+
+    DatabaseServer:
+      Type: AWS::RDS::DBInstance
+      ...
+
+---
+
+# Custom Wait Conditions
+
+Use `AWS::CloudFormation::WaitConditionHandle` and `AWS::CloudFormation::WaitCondition`.
+
+You can trigger a WaitCondition by doing a HTTP POST request from your script.
+
+---
+
+# CloudWatch
+
+Monitors the instances' resources, can act on specified conditions:
+
+* Start a new instance under high RAM/CPU utilization
+* Spin down extra instances on low utilization
+* Restart services/instances/the whole stack when it goes down
+
+---
+
+# Heat API
+
+2 separate APIs:
+
+1. AWS CloudFormation compatible API
+2. RESTish API similar to other OpenStack services
+
+---
+
+# The Heat community
+  - about 5 core contributors
+  - follow the openstack way
+  - about 12 other contributors (7 outside of Red Hat)
+    * testing, feature requests, bug reporting; little code
+  - Ceilometer collaboration
+
+---
+
+# The Demo
+
+---
+
+# Question
+
+---
+
+# Wrap Up
+  - heat website
+  - github
+  - #heat on freenode (we're there pretty much 24/7)
+
+# -30-
+
+

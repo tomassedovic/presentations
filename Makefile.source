@@ -1,0 +1,7 @@
+
+presentation:
+	../generate.sh
+
+
+clean:
+	rm -rf theme presentation.html

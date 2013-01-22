@@ -1,0 +1,5 @@
+[landslide]
+theme = default
+source = presentation.mdown
+css = assets/custom.css
+relative = True

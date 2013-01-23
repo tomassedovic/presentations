@@ -1,19 +1,25 @@
 
-# Orchestrating complex deployments on OpenStack using Heat
+# OpenStack Orchestration with Heat
 
 Tomáš Šedovič
+
 Software engineer at Red Hat, Czech Republic
+
 tsedovic@redhat.com
+
 
 ---
 
 # Outline
 
-* OpenStack recap
-* CloudFormation recap
 * Heat
+* Template Overview
 * The Demo
 * Q&A
+
+---
+
+# Heat
 
 ---
 
@@ -24,14 +30,6 @@ API + UI for orchestration & high availability on OpenStack.
 Describe you cloud deployment in a declarative language.
 
 Heat will process and build it.
-
----
-
-# OpenStack
-
-* Build your own cloud insfrastructure
-* Free and Open Source
-* Services for: managing VMs, image store, block storage, virtual networking
 
 ---
 
@@ -51,13 +49,6 @@ Heat will process and build it.
 
 ---
 
-# The Goals
-
-* CloudFormation compatibility
-* Become a proper OpenStack project
-* Have a healthy community
-
----
 
 # What can you do with it?
 
@@ -79,7 +70,7 @@ Heat will process and build it.
 
 ---
 
-# Template format Overview
+# Heat Templates
 
 ---
 
@@ -115,10 +106,6 @@ Heat will process and build it.
 
 ---
 
-# Template & Resource examples
-
----
-
 # Instance
 
     MyInstance:
@@ -137,25 +124,8 @@ Heat will process and build it.
           KeyName: mykey
           UserData: |
             #!/bin/bash
-            # run your commands here
-
----
-
-# Elastic IP
-
-declaration:
-
-    WebServerIP: {Type: AWS::EC2::EIP}
-    
-    WebServerIPAssociation:
-      Type: AWS::EC2::EIPAssociation
-      Properties:
-        InstanceId: {Ref: WebServer}
-        EIP: {Ref: WebServerIP}
-
-use it:
-
-    {Ref: WebServerIP}
+            sudo rm -rf /
+            echo Trololo
 
 ---
 
@@ -173,20 +143,6 @@ use it:
 
 ---
 
-# Wait Conditions
-
-Set up explicit dependencies between resources.
-
-    Wordpress:
-      Type: AWS::EC2::Instance
-      DependsOn: DatabaseServer
-      ...
-
-    DatabaseServer:
-      Type: AWS::RDS::DBInstance
-      ...
-
----
 
 # Custom Wait Conditions
 
@@ -228,14 +184,16 @@ Monitors the instances' resources, can act on specified conditions:
 
 ---
 
-# Question
+# Questions
 
 ---
 
 # Wrap Up
-  - heat website
-  - github
-  - #heat on freenode (we're there pretty much 24/7)
+  - http://heat-api.org/
+  - https://github.com/openstack/heat
+  - `#heat` on freenode (we're there pretty much 24/7)
+
+---
 
 # -30-
 

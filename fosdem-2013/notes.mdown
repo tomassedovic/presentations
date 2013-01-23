@@ -1,0 +1,41 @@
+Notes
+=====
+
+
+## Visuals
+
+(just add random cat pics if you can't think of anything better)
+
+The Grumpy Cat: <http://i2.kym-cdn.com/photos/images/newsfeed/000/406/325/b31.jpg>
+
+The Heat logo: <http://heat-api.org/heat-logo-design/slow/heat_logo-large.png>
+
+Sun: <http://solarsystem.nasa.gov/images/Sun.jpg>
+
+
+## The Demo Setup
+
+* Build an image with everything preinstalled (will be faster)
+* Setup Horizon with Thermal
+* Record the demo screencast as a backup
+
+
+## The Demo
+
+Based off of this:
+
+https://github.com/openstack/heat/blob/master/templates/AutoScalingMultiAZSample.template
+
+  - Explain what we're going to do (autoscaling)
+  - Show the interesting bits of the template (alarms, the cron-based monitoring and signalling, how the instance resource is specified)
+  - Open Thermal (the Heat UI for Horizon)
+  - Launch a stack from the template
+  - Show how it's launched in the UI
+  - show the launched instances in Horizon
+  - ssh into it
+  - hog the memory
+  - show that another instance gets launched
+  - stop the memory hog
+  - show that the new instance got dropped
+
+

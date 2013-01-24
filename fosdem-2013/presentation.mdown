@@ -41,15 +41,6 @@ Heat will process and build it.
 
 ---
 
-# Heat Origin
-
-* Started in March 2012
-* Small dev core
-* Early outside interest
-
----
-
-
 # What can you do with it?
 
 * Launch instances with inter dependencies & parameters
@@ -80,21 +71,39 @@ Heat will process and build it.
     Description: This is an empty Heat template showing the basic structure
 
     Parameters:
-      KeyName:
-        Description: Nova keypair name for SSH access
-        Type: String
-      InstanceType:
-        Type: String
-        Default: m1.large
-        AllowedValues: [t1.micro, m1.small, m1.large]
+      ...
 
     Resources:
-      WebServer:
-        Type: AWS::EC2::Instance
-        Properties:
-          ImageId: ami-b57474c1
-          InstanceType: {Ref: InstanceType}
-          KeyName: {Ref: KeyName}
+      ...
+
+    Outputs:
+      ...
+
+---
+
+# Parameters
+
+    KeyName:
+      Description: Nova keypair name for SSH access
+      Type: String
+
+    InstanceType:
+      Type: String
+      Default: m1.large
+      AllowedValues: [t1.micro, m1.small, m1.large]
+
+---
+
+# Resources
+
+    WebServer:
+      Type: AWS::EC2::Instance
+      Properties:
+        ImageId: ami-b57474c1
+        InstanceType: {Ref: InstanceType}
+        KeyName: {Ref: KeyName}
+
+
 
     Outputs:
       WebsiteURL:
@@ -106,26 +115,52 @@ Heat will process and build it.
 
 ---
 
-# Instance
+# Instance Properties
 
     MyInstance:
       Type: AWS::EC2::Instance
-        Metadata:
-          packages:
-            yum:
-              httpd: []
-              wordpress: []
-          services:
-            systemd:
-              httpd: {enabled: 'true', ensureRunning: 'true'}
-        Properties:
-          ImageId: ami-b57474c1
-          InstanceType: m1.large
-          KeyName: mykey
-          UserData: |
-            #!/bin/bash
-            sudo rm -rf /
-            echo Trololo
+      Properties:
+        ImageId: ami-b57474c1
+        InstanceType: m1.large
+        KeyName: mykey
+        UserData: |
+          #!/bin/bash
+          sudo rm -rf /
+          echo Trololo
+
+      ...
+
+
+---
+
+# CloudFormation::Init
+
+    MyInstance:
+      Type: AWS::EC2::Instance:
+      Metadata:
+        "AWS::CloudFormation::Init":
+          config:
+            packages:
+              yum:
+                httpd: []
+                wordpress: []
+
+              rubygems:
+                ...
+
+            services:
+              systemd:
+                httpd: {enabled: 'true', ensureRunning: 'true'}
+
+              sysvinit:
+                rails: [2.3.11]
+                thin: []
+
+            files:
+              ...
+
+      ...
+
 
 ---
 
@@ -143,15 +178,6 @@ Heat will process and build it.
 
 ---
 
-
-# Custom Wait Conditions
-
-Use `AWS::CloudFormation::WaitConditionHandle` and `AWS::CloudFormation::WaitCondition`.
-
-You can trigger a WaitCondition by doing a HTTP POST request from your script.
-
----
-
 # CloudWatch
 
 Monitors the instances' resources, can act on specified conditions:
@@ -162,19 +188,10 @@ Monitors the instances' resources, can act on specified conditions:
 
 ---
 
-# Heat API
-
-2 separate APIs:
-
-1. AWS CloudFormation compatible API
-2. RESTish API similar to other OpenStack services
-
----
-
 # The Heat community
   - about 5 core contributors
   - follow the openstack way
-  - about 12 other contributors (7 outside of Red Hat)
+  - about 12 other contributors over time (7 outside of Red Hat)
     * testing, feature requests, bug reporting; little code
   - Ceilometer collaboration
 
@@ -184,9 +201,6 @@ Monitors the instances' resources, can act on specified conditions:
 
 ---
 
-# Questions
-
----
 
 # Wrap Up
   - http://heat-api.org/

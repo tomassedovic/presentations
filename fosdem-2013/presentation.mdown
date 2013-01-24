@@ -33,14 +33,6 @@ Heat will process and build it.
 
 ---
 
-# Amazon CloudFormation
-
-* JSON-based language
-* API for launching "Stacks"
-* Tied with AWS services: EC2, S3, EBS, CloudWatch, etc.
-
----
-
 # What can you do with it?
 
 * Launch instances with inter dependencies & parameters
@@ -102,79 +94,57 @@ Heat will process and build it.
         ImageId: ami-b57474c1
         InstanceType: {Ref: InstanceType}
         KeyName: {Ref: KeyName}
+        Metadata:
+          ...
+        UserData:
+          ...
 
+    MySubnet:
+      Type: OS::Quantum::Subnet
+      Properties:
+        network_id: {Ref: network}
+        ip_version: 4
+        cidr: 10.0.3.0/24
+        allocation_pools:
+        - {end: 10.0.3.150, start: 10.0.3.20}
 
-
-    Outputs:
-      WebsiteURL:
-        Value:
-          Fn::Join:
-          - ''
-          - ["http://", {Fn::GetAtt: [WikiDatabase, PublicIp]}, "/wordpress"]
-        Description: URL for the deployed site
 
 ---
 
-# Instance Properties
+# Instance: cfn-init
 
-    MyInstance:
-      Type: AWS::EC2::Instance
-      Properties:
-        ImageId: ami-b57474c1
-        InstanceType: m1.large
-        KeyName: mykey
-        UserData: |
-          #!/bin/bash
-          sudo rm -rf /
-          echo Trololo
+Parses the metadata section: installs packages, starts up services, adds custom files.
 
+    packages:
+      yum:
+        httpd: []
+        wordpress: []
+
+      rubygems:
+        rails: [2.3.11]
+        thin: []
+
+    services:
+      systemd:
+        httpd: {enabled: 'true', ensureRunning: 'true'}
+
+      sysvinit:
+        ...
+
+    files:
       ...
 
-
 ---
 
-# CloudFormation::Init
+# Instance UserData
 
-    MyInstance:
-      Type: AWS::EC2::Instance:
-      Metadata:
-        "AWS::CloudFormation::Init":
-          config:
-            packages:
-              yum:
-                httpd: []
-                wordpress: []
+Executed once the instance is active.
 
-              rubygems:
-                ...
+    UserData: |
+      #!/bin/bash
+      sudo rm -rf /
+      echo Trololo
 
-            services:
-              systemd:
-                httpd: {enabled: 'true', ensureRunning: 'true'}
-
-              sysvinit:
-                rails: [2.3.11]
-                thin: []
-
-            files:
-              ...
-
-      ...
-
-
----
-
-# Relation Database Service
-
-    MyDBServer:
-      Type: AWS::RDS::DBInstance
-      Properties:
-        DBName: wordpress
-        Engine: MySQL
-        MasterUsername: wordpress
-        MasterUserPassword: 1234
-        AllocatedStorage: 5
-        DBInstanceClass: db.m1.small
 
 ---
 

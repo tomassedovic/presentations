@@ -120,19 +120,16 @@ Parses the metadata section: installs packages, starts up services, adds custom 
         httpd: []
         wordpress: []
 
-      rubygems:
-        rails: [2.3.11]
-        thin: []
-
     services:
       systemd:
         httpd: {enabled: 'true', ensureRunning: 'true'}
 
-      sysvinit:
-        ...
-
     files:
-      ...
+      "/etc/yum.repos.d/epel.repo":
+        source: "https://s3.amazonaws.com/cloudformation-examples/enable-epel-on-amazon-linux-ami"
+        mode: 000644
+        owner: root
+        group: root
 
 ---
 
@@ -160,7 +157,6 @@ Monitors the instances' resources, can act on specified conditions:
 
 # The Heat community
   - about 5 core contributors
-  - follow the openstack way
   - about 12 other contributors over time (7 outside of Red Hat)
     * testing, feature requests, bug reporting; little code
   - Ceilometer collaboration

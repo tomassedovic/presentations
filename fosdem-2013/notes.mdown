@@ -18,6 +18,7 @@ Sun: <http://solarsystem.nasa.gov/images/Sun.jpg>
 * Build an image with everything preinstalled (will be faster)
 * Setup Horizon with Thermal
 * Record the demo screencast as a backup
+* Test everything offline
 
 
 ## The Demo

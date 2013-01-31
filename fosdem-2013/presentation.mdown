@@ -1,11 +1,11 @@
 
 # OpenStack Orchestration with Heat
 
-Tomáš Šedovič
+**Tomáš Šedovič**
 
-Software engineer at Red Hat, Czech Republic
+*Software engineer at* Red Hat*, Czech Republic*
 
-tsedovic@redhat.com
+<tsedovic@redhat.com>
 
 
 ---
@@ -45,6 +45,16 @@ Heat will process and build it.
 
 ---
 
+# AWS CloudFormation
+
+<http://aws.amazon.com/cloudformation/>
+
+* Inspiration for Heat
+* Our original API and Template formats are compatible
+* Heat can be controlled via **boto**
+
+---
+
 # Relation with OpenStack
 
 * Along with ceilometer the first external project accepted into incubation
@@ -73,22 +83,9 @@ Heat will process and build it.
 
 ---
 
-# Parameters
+# Resource example
 
-    KeyName:
-      Description: Nova keypair name for SSH access
-      Type: String
-
-    InstanceType:
-      Type: String
-      Default: m1.large
-      AllowedValues: [t1.micro, m1.small, m1.large]
-
----
-
-# Resources
-
-    WebServer:
+    MyApacheServer:
       Type: AWS::EC2::Instance
       Properties:
         ImageId: ami-b57474c1
@@ -96,51 +93,23 @@ Heat will process and build it.
         KeyName: {Ref: KeyName}
         Metadata:
           ...
-        UserData:
-          ...
+        UserData: |
+          #!/bin/bash
+          /opt/aws/bin/cfn-init
+          rm -rf /
+          echo Trololo
 
-    MySubnet:
-      Type: OS::Quantum::Subnet
-      Properties:
-        network_id: {Ref: network}
-        ip_version: 4
-        cidr: 10.0.3.0/24
-        allocation_pools:
-        - {end: 10.0.3.150, start: 10.0.3.20}
 
 
 ---
 
-# Instance: cfn-init
+# Provisioning
 
-Parses the metadata section: installs packages, starts up services, adds custom files.
+List **packages**, **services**, **files** in the `Metadata` section.
 
-    packages:
-      yum:
-        httpd: []
-        wordpress: []
+Put custom code in the `UserData` section.
 
-    services:
-      systemd:
-        httpd: {enabled: 'true', ensureRunning: 'true'}
-
-    files:
-      "/etc/yum.repos.d/epel.repo":
-        source: "https://s3.amazonaws.com/cloudformation-examples/enable-epel-on-amazon-linux-ami"
-        mode: 000644
-        owner: root
-        group: root
-
----
-
-# Instance UserData
-
-Executed once the instance is active.
-
-    UserData: |
-      #!/bin/bash
-      sudo rm -rf /
-      echo Trololo
+`cfn-init` installs packages, enables services & uploads files.
 
 
 ---
@@ -155,6 +124,18 @@ Monitors the instances' resources, can act on specified conditions:
 
 ---
 
+# The Demo
+
+---
+
+# Autoscaling
+
+* A wordpress instance behind a load balancer
+* Spin up a new instance when the RAM load > 50%
+* Delete it when the load decreases
+
+---
+
 # The Heat community
   - about 5 core contributors
   - about 12 other contributors over time (7 outside of Red Hat)
@@ -163,14 +144,10 @@ Monitors the instances' resources, can act on specified conditions:
 
 ---
 
-# The Demo
-
----
-
 
 # Wrap Up
-  - http://heat-api.org/
-  - https://github.com/openstack/heat
+  - <http://heat-api.org/>
+  - <https://github.com/openstack/heat>
   - `#heat` on freenode (we're there pretty much 24/7)
 
 ---

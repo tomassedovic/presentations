@@ -19,7 +19,7 @@
 
 ---
 
-# Heat
+<h1 class="heat-slide">Heat</h1>
 
 ---
 
@@ -50,8 +50,8 @@ Heat will process and build it.
 <http://aws.amazon.com/cloudformation/>
 
 * Inspiration for Heat
-* Our original API and Template formats are compatible
-* Heat can be controlled via **boto**
+* Our original API and template formats are compatible
+* Heat can be controlled via **[boto](https://github.com/boto/boto)**
 
 ---
 
@@ -70,7 +70,7 @@ Heat will process and build it.
 # Structure
 
     HeatTemplateFormatVersion: 2012-12-12
-    Description: This is an empty Heat template showing the basic structure
+    Description: This is an empty Heat template
 
     Parameters:
       ...

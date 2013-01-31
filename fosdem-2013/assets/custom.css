@@ -5,3 +5,10 @@ code {
 
 .slide section li { font-size: 30px; }
 .slide section p { font-size: 30px; }
+
+.slide header h1.heat-slide {
+  font-size: 100px;
+  vertical-align: top;
+  color: white;
+  background-image: url(../sun_cme.jpg);
+}

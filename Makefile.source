@@ -7,9 +7,10 @@ presentation:
 
 pdf:
 	mkdir -p output
-	pandoc -t beamer -o output/presentation.pdf presentation.mdown
+	pandoc -t beamer -o output/slides.pdf presentation.mdown
+
 
 clean:
-	rm -rf presentation.html presentation.pdf output
+	rm -rf presentation.html slides.pdf output
 
 build: presentation pdf

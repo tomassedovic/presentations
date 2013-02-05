@@ -25,23 +25,23 @@
 
 # What is Heat?
 
-API + UI for orchestration & high availability on OpenStack.
+API + UI for orchestration on OpenStack.
 
 Describe you cloud deployment in a declarative language.
 
-Heat will process and build it.
+Heat will process and build it and keep it up.
 
 ---
 
 # What can you do with it?
 
-* Launch instances with inter dependencies & parameters
+* Launch & provision instances with inter dependencies & parameters
 * Attach block (cinder) or object (swift) storage
 * Floating IPs
 * Load balancing
+* Autoscaling
 * High availability (restart services, instances, the whole stack)
-* Database resource type
-* Networking (quantum) in progress
+* Networking (quantum)
 
 ---
 
@@ -88,9 +88,9 @@ Heat will process and build it.
     MyApacheServer:
       Type: AWS::EC2::Instance
       Properties:
-        ImageId: ami-b57474c1
-        InstanceType: {Ref: InstanceType}
-        KeyName: {Ref: KeyName}
+        ImageId: f17-jeos
+        InstanceType: {Ref: MyFlavor}
+        KeyName: {Ref: MyApacheSSHKey}
         Metadata:
           ...
         UserData: |

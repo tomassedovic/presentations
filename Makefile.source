@@ -1,7 +1,15 @@
 
 presentation:
 	../generate.sh
+	mkdir -p output
+	cp -r assets theme output
+	mv presentation.html output/index.html
 
+pdf:
+	mkdir -p output
+	pandoc -f markdown -o output/presentation.pdf presentation.mdown
 
 clean:
-	rm -rf theme presentation.html
+	rm -rf presentation.html presentation.pdf output
+
+build: presentation pdf
